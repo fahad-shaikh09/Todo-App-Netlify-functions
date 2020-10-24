@@ -53,15 +53,30 @@ const resolvers = {
   },
 
   Mutation:{
-    addTodos: (_, {title, desc}) => {
+    addTodos: async (_, {title, desc}) => {
       console.log("Title:", title)
       console.log("Desc:", desc)
-        return{
-          id: 10,
-          title,
-          desc,
+        try{
+        var adminClient = new faunadb.Client({secret: "fnAD478qs6ACAZU-GkpG0-zvvTWwyu_8UAsM2hDi"})
+
+          const result = await adminClient.query(
+            q.Create(
+              q.Collection("todos"),
+              {
+                data: {
+                  title,
+                  desc
+                }
+              }
+            )
+          )
+        return result.data
         }
-    }
+        catch(err){
+          console.log("error in mutation AddTodos===========", err)
+        }
+
+      }
 
   } 
 
