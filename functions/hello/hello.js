@@ -10,7 +10,7 @@ const typeDefs = gql`
   }
 
   type Todos {
-    id: ID!
+    id: ID
     title: String!
     desc: String!
   }
@@ -20,11 +20,11 @@ const typeDefs = gql`
   } 
 `
 
-const Todos = [
-  { id: 1, title: 'Shopping', desc: "buying clothes" },
-  { id: 2, title: 'Outing', desc: "for spending time" },
-  { id: 3, title: 'Walking', desc: "morning walk" },
-]
+// const Todos = [
+//   { id: 1, title: 'Shopping', desc: "buying clothes" },
+//   { id: 2, title: 'Outing', desc: "for spending time" },
+//   { id: 3, title: 'Walking', desc: "morning walk" },
+// ]
 
 const resolvers = {
   Query: {
@@ -37,12 +37,16 @@ const resolvers = {
         var adminClient = new faunadb.Client({secret: "fnAD478qs6ACAZU-GkpG0-zvvTWwyu_8UAsM2hDi"})
         const result = await adminClient.query(
           q.Map(
-            q.Paginate(q.Match(q.Index('todos'))),  //todos is collection in faunadb
+            q.Paginate(q.Match(q.Index('desc'))),  //desc is index in faunadb
             q.Lambda(x => q.Get(x))
           )
         )
         console.log(" result.data in hello function.js ==>>", result.data)
-        return result.data
+        return result.data.map(d=>{
+          return {id: d.ts,
+          title:d.data.title,
+          desc:d.data.desc}
+        })
 
       }catch(err){
         console.log("error from function:", err)
@@ -61,8 +65,7 @@ const resolvers = {
 
           const result = await adminClient.query(
             q.Create(
-              q.Collection("todos"),
-              {
+              q.Collection("todos"),{
                 data: {
                   title,
                   desc

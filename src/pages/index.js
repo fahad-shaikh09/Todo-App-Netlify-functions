@@ -5,10 +5,6 @@ import { useMutation, useQuery } from "@apollo/client"
 import gql from "graphql-tag"
 
 
-let titleField;
-let descField;
-
-
 const GET_TODOS = gql`
   {
     allTodos {
@@ -22,15 +18,19 @@ const GET_TODOS = gql`
 const ADD_TODO = gql`
   mutation addTodos($title: String, $desc: String){
    addTodos(title: $title, desc: $desc){
+    title,
+    desc,
     id
   }
 }
 `
 
-
 export default function Home() {
 
-  const {error, loading, data} = useQuery(GET_TODOS)
+  let titleField;
+  let descField;
+
+  const { error, loading, data } = useQuery(GET_TODOS)
   const [addTodos] = useMutation(ADD_TODO)
 
   console.log("Data in index.js ==>>:", data)
@@ -39,30 +39,35 @@ export default function Home() {
   const handleSubmit = () => {
     console.log("titleField: ", titleField.value)
     console.log("descField: ", descField.value)
-      addTodos({
-        variables:{
-          title: titleField.value,
-          desc: descField.value
-        }
-      })
+    addTodos({
+      variables: {
+        title: titleField.value,
+        desc: descField.value
+      },
+      refetchQueries: [{ query: GET_TODOS }]
+    }
+    )
   }
 
-  if(loading) return <h1> Loading</h1> 
+  if (loading) return <h1> Loading</h1>
 
-  if(error) return <h1> {error}</h1> 
+  if (error) return <h1> {error}</h1>
 
   return <div>
 
-      <h1> Todo App</h1>
+    <h1> Todo App</h1>
 
-      <h2>Enter Title</h2>  
-      <input type="text" ref={node => titleField=node} />
+    <h2>Enter Title</h2>
+    <input type="text" ref={node => titleField = node} />
 
-      <h2>Enter Desc</h2>  
-      <input type="text" ref={node => descField=node} />
-      < br />
+    <h2>Enter Desc</h2>
+    <input type="text" ref={node => descField = node} />
+    < br />
 
-      <button onClick={handleSubmit}>Add Todo item </button>
+    <button onClick={handleSubmit}>Add Todo item </button>
+
+    <h3> Data from Server </h3>
+      {JSON.stringify(data.allTodos)}
   </div>
 
 
