@@ -1,9 +1,7 @@
 import React from "react"
-
-// import {useEffect, useState} from "react"
 import { useMutation, useQuery } from "@apollo/client"
 import gql from "graphql-tag"
-
+import "./../styles/styles.css"
 
 const GET_TODOS = gql`
   {
@@ -53,7 +51,7 @@ export default function Home() {
 
   if (error) return <h1> {error}</h1>
 
-  return <div>
+  return <div className="main">
 
     <h1> Todo App</h1>
 
@@ -62,36 +60,37 @@ export default function Home() {
 
     <h2>Enter Desc</h2>
     <input type="text" ref={node => descField = node} />
+
+    < br />
+    <button onClick={handleSubmit}>Add Todo item </button>
+    < br />
     < br />
 
-    <button onClick={handleSubmit}>Add Todo item </button>
-
     <h3> Data from Server </h3>
+    <div className="table">
+      <table border="1">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>TITLE</th>
+            <th>DESC</th>
+          </tr>
+        </thead>
 
-    <table border="1">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>TITLE</th>
-          <th>DESC</th>
-        </tr>
-      </thead>
+        <tbody>
+          {data.allTodos.map(d => {
+            return (
+              <tr key={d.id}>
+                <td>{d.id}</td>
+                <td>{d.title} </td>
+                <td>{d.desc} </td>
+              </tr>
 
-      <tbody>
-        {data.allTodos.map(d => {
-          return (
-            <tr key={d.id}>
-              <td>{d.id}</td>
-              <td>{d.title} </td>
-              <td>{d.desc} </td>
-            </tr>
+            )
+          })}
 
-          )
-        })}
-
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   </div>
-
-
 }
