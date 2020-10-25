@@ -67,7 +67,30 @@ export default function Home() {
     <button onClick={handleSubmit}>Add Todo item </button>
 
     <h3> Data from Server </h3>
-      {JSON.stringify(data.allTodos)}
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>TITLE</th>
+          <th>DESC</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {data.allTodos.map(d => {
+          return (
+            <tr key={d.id}>
+              <td>{d.id}</td>
+              <td>{d.title} </td>
+              <td>{d.desc} </td>
+            </tr>
+
+          )
+        })}
+
+      </tbody>
+    </table>
   </div>
 
 
